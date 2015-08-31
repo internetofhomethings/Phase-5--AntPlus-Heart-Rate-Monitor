@@ -125,6 +125,8 @@ C2. Button added to top navigation bar to use/not use ESP8266 data in log file.
 
 
 Phase 5: Mobile App Gadgets:  August 31, 2015 
+
 Change:
+
 Added Ant+ Heart Rate Monitor Sensor
 
