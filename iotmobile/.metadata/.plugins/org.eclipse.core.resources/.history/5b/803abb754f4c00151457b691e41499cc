@@ -1,0 +1,254 @@
+package org.apache.cordova.antplus.heartrate;
+
+	import android.app.Activity;
+	import android.app.AlertDialog;
+	import android.content.DialogInterface;
+	import android.content.DialogInterface.OnClickListener;
+	import android.content.Intent;
+	import android.net.Uri;
+	import android.os.Bundle;
+	import android.view.Menu;
+	import android.view.MenuItem;
+	import android.view.View;
+	import android.view.ViewGroup;
+	import android.widget.TextView;
+	import android.widget.Toast;
+
+
+	import java.math.BigDecimal;
+    import java.util.EnumSet;
+
+	import org.apache.cordova.CordovaPlugin;
+	import org.apache.cordova.CallbackContext;
+
+    import org.json.JSONArray;
+    import org.json.JSONException;
+	import org.json.JSONObject;
+    
+    //ant+ plugins
+    import com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc;
+import com.dsi.ant.plugins.antplus.pccbase.AntPluginPcc.IPluginAccessResultReceiver;
+import com.dsi.ant.plugins.antplus.pccbase.MultiDeviceSearch.MultiDeviceSearchResult;
+
+import com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc;
+import com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc.DataState;
+import com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc.ICalculatedRrIntervalReceiver;
+import com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc.IHeartRateDataReceiver;
+import com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc.IPage4AddtDataReceiver;
+import com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc.RrFlag;
+import com.dsi.ant.plugins.antplus.pcc.defines.DeviceState;
+import com.dsi.ant.plugins.antplus.pcc.defines.EventFlag;
+import com.dsi.ant.plugins.antplus.pcc.defines.RequestAccessResult;
+import com.dsi.ant.plugins.antplus.pccbase.AntPlusCommonPcc.IRssiReceiver;
+import com.dsi.ant.plugins.antplus.pccbase.PccReleaseHandle;
+import com.dsi.ant.plugins.antplus.pccbase.AntPluginPcc.IDeviceStateChangeReceiver;
+import com.dsi.ant.plugins.antplus.pccbase.AntPluginPcc.IPluginAccessResultReceiver;
+import com.dsi.ant.plugins.antplus.pccbase.AntPlusLegacyCommonPcc.ICumulativeOperatingTimeReceiver;
+import com.dsi.ant.plugins.antplus.pccbase.AntPlusLegacyCommonPcc.IManufacturerAndSerialReceiver;
+import com.dsi.ant.plugins.antplus.pccbase.AntPlusLegacyCommonPcc.IVersionAndModelReceiver;
+
+    /**
+     * This class echoes a string called from JavaScript.
+     */
+    public class FindHeartRateMonitor extends CordovaPlugin {
+
+        AntPlusHeartRatePcc hrPcc = null;
+        protected PccReleaseHandle<AntPlusHeartRatePcc> releaseHandle = null;
+        RequestAccessResult resultstatus = null;
+        CallbackContext callbackContext_ = null;
+        String hrmHeartRate = "";
+        String hrmHeartBeatCount = "";
+        String hrmHeartBeatEventTime = "";
+
+        @Override
+        public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
+        	callbackContext_ = callbackContext;
+        	if (action.equals("Echo")) {
+                String message = args.getString(0);
+                this.echo(message, callbackContext);
+                return true;
+            }
+            if (action.equals("FindHeartRateMonitor")) {
+				// starts the plugins UI search
+                releaseHandle = AntPlusHeartRatePcc.requestAccess(this.cordova.getActivity(), this.cordova.getActivity(), 
+                		base_IPluginAccessResultReceiver, base_IDeviceStateChangeReceiver);
+
+                return true;
+            }
+            if (action.equals("GetHeartRateData")) {
+            	String hrmValues = "{ " + '"hr" : ' + 
+            	sendresult(result.getDeviceName(), callbackContext_);
+                String hrmHeartRate = "";
+                String hrmHeartBeatCount = "";
+                String hrmHeartBeatEventTime = "";
+
+                return true;
+            }
+            return false;
+        }
+        IPluginAccessResultReceiver<AntPlusHeartRatePcc> base_IPluginAccessResultReceiver =
+            new IPluginAccessResultReceiver<AntPlusHeartRatePcc>()
+            {
+                //Handle the result, connecting to events on success or reporting failure to user.
+                @Override
+                public void onResultReceived(AntPlusHeartRatePcc result, RequestAccessResult resultCode,
+                    DeviceState initialDeviceState)
+                {
+                	resultstatus = resultCode;
+                    switch(resultCode)
+                    {
+                        case SUCCESS:
+                            hrPcc = result;
+                            sendresult(result.getDeviceName(), callbackContext_);
+                            ////tv_status.setText(result.getDeviceName() + ": " + initialDeviceState);
+                            ////subscribeToHrEvents();
+                            ////if(!result.supportsRssi()) tv_rssi.setText("N/A");
+                            break;
+                        case CHANNEL_NOT_AVAILABLE:
+                            sendresult("Channel not available", callbackContext_);
+                        	////Toast.makeText(Activity_HeartRateDisplayBase.this, "Channel Not Available", Toast.LENGTH_SHORT).show();
+                        	////tv_status.setText("Error. Do Menu->Reset.");
+                            break;
+                        case ADAPTER_NOT_DETECTED:
+                            sendresult("Adapter not detected", callbackContext_);
+                            //Toast.makeText(Activity_HeartRateDisplayBase.this, "ANT Adapter Not Available. Built-in ANT hardware or external adapter required.", Toast.LENGTH_SHORT).show();
+                            //tv_status.setText("Error. Do Menu->Reset.");
+                            break;
+                        case BAD_PARAMS:
+                            sendresult("Bad Params", callbackContext_);
+                            //Note: Since we compose all the params ourself, we should never see this result
+                            //Toast.makeText(Activity_HeartRateDisplayBase.this, "Bad request parameters.", Toast.LENGTH_SHORT).show();
+                            //tv_status.setText("Error. Do Menu->Reset.");
+                            break;
+                        case OTHER_FAILURE:
+                            sendresult("Other Failure", callbackContext_);
+                            //Toast.makeText(Activity_HeartRateDisplayBase.this, "RequestAccess failed. See logcat for details.", Toast.LENGTH_SHORT).show();
+                            //tv_status.setText("Error. Do Menu->Reset.");
+                            break;
+                        case DEPENDENCY_NOT_INSTALLED:
+                            sendresult("DEPENDENCY_NOT_INSTALLED", callbackContext_);
+                            /*
+                            tv_status.setText("Error. Do Menu->Reset.");
+                            AlertDialog.Builder adlgBldr = new AlertDialog.Builder(Activity_HeartRateDisplayBase.this);
+                            adlgBldr.setTitle("Missing Dependency");
+                            adlgBldr.setMessage("The required service\n\"" + AntPlusHeartRatePcc.getMissingDependencyName() + "\"\n was not found. You need to install the ANT+ Plugins service or you may need to update your existing version if you already have it. Do you want to launch the Play Store to get it?");
+                            adlgBldr.setCancelable(true);
+                            adlgBldr.setPositiveButton("Go to Store", new OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    Intent startStore = null;
+                                    startStore = new Intent(Intent.ACTION_VIEW,Uri.parse("market://details?id=" + AntPlusHeartRatePcc.getMissingDependencyPackageName()));
+                                    startStore.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                                    Activity_HeartRateDisplayBase.this.startActivity(startStore);
+                                }
+                            });
+                            adlgBldr.setNegativeButton("Cancel", new OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    dialog.dismiss();
+                                }
+                            });
+
+                            final AlertDialog waitDialog = adlgBldr.create();
+                            waitDialog.show();
+                            */
+                            break;
+                        case USER_CANCELLED:
+                            sendresult("USER_CANCELLED", callbackContext_);
+                            //tv_status.setText("Cancelled. Do Menu->Reset.");
+                            break;
+                        case UNRECOGNIZED:
+                            sendresult("UNRECOGNIZED", callbackContext_);
+                            /*
+                            Toast.makeText(Activity_HeartRateDisplayBase.this,
+                                "Failed: UNRECOGNIZED. PluginLib Upgrade Required?",
+                                Toast.LENGTH_SHORT).show();
+                            tv_status.setText("Error. Do Menu->Reset.");
+                            */
+                            break;
+                        default:
+                            sendresult("default failure", callbackContext_);
+                            /*
+                            Toast.makeText(Activity_HeartRateDisplayBase.this, "Unrecognized result: " + resultCode, Toast.LENGTH_SHORT).show();
+                            tv_status.setText("Error. Do Menu->Reset.");
+                            */
+                            break;
+                    }
+                }
+            };
+        //Receives state changes and shows it on the status display line
+        protected  IDeviceStateChangeReceiver base_IDeviceStateChangeReceiver =
+            new IDeviceStateChangeReceiver()
+        {
+            @Override
+            public void onDeviceStateChange(final DeviceState newDeviceState)
+            {
+            	
+            }
+        };
+        public void subscribeToHrEvents()
+        {
+            hrPcc.subscribeHeartRateDataEvent(new IHeartRateDataReceiver()
+            {
+				@Override
+				public void onNewHeartRateData(
+						final long estTimestamp,
+						EnumSet<EventFlag> eventFlags,
+						final int computedHeartRate, 
+						final long heartBeatCount,
+						final BigDecimal heartBeatEventTime, 
+						final DataState dataState) 
+				{
+	                // Mark heart rate with asterisk if zero detected
+	                final String textHeartRate = String.valueOf(computedHeartRate)
+	                    + ((DataState.ZERO_DETECTED.equals(dataState)) ? "*" : "");
+
+	                // Mark heart beat count and heart beat event time with asterisk if initial value
+	                final String textHeartBeatCount = String.valueOf(heartBeatCount)
+	                    + ((DataState.INITIAL_VALUE.equals(dataState)) ? "*" : "");
+	                final String textHeartBeatEventTime = String.valueOf(heartBeatEventTime)
+	                    + ((DataState.INITIAL_VALUE.equals(dataState)) ? "*" : "");
+                    
+	                /********************************
+	                runOnUiThread(new Runnable()
+	                {
+	                    @Override
+	                    public void run()
+	                    {
+	                        //tv_estTimestamp.setText(String.valueOf(estTimestamp));
+
+	                        //tv_computedHeartRate.setText(textHeartRate);
+	                        //tv_heartBeatCounter.setText(textHeartBeatCount);
+	                        //tv_heartBeatEventTime.setText(textHeartBeatEventTime);
+
+	                        //tv_dataStatus.setText(dataState.toString());
+	                    }
+	                });
+	                *****/
+				}
+            	
+            });
+        };
+        
+        
+        
+        private void echo(String message, CallbackContext callbackContext) {
+            if (message != null && message.length() > 0) {
+                callbackContext.success(message);
+            } else {
+                callbackContext.error("Expected one non-empty string argument.");
+            }
+        }
+        private void sendresult(String message, CallbackContext callbackContext) {
+            if (message != null && message.length() > 0) {
+                callbackContext.success(message);
+            } else {
+                callbackContext.error("Expected one non-empty string argument.");
+            }
+        }
+    }

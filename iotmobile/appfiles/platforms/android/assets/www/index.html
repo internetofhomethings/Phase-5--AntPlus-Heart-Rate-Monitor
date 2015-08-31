@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Mobile Monitors</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" /> 
+    
+    <!----css for the project --->
+    <link rel="stylesheet" type="text/css" href="css/index_app.css" /> 
+
+  </head>
+
+  <body>
+    <!----------------------------------------------------------------------------
+      --- Top of Page Navigation Bar
+      --- first class specifies object...second class has some generic styling 
+      --- navbar-inverse(black background)
+      --- navbar-default(light grey background) 
+      ---------------------------------------------------------------------------->
+    <div class="navbar navbar-default navbar-fixed-top">
+      <div class="container">  <!--- container-fluid for non fixed width --->
+          <!--- Title on left, collapsable menu on right --->
+          <div class="navbar-header">
+
+            <a href="" class="navbar-brand">
+                <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
+                Mobile Things
+            </a>
+            <button class="btn btn-default" id="esp" type="button">ESP used</button>
+            <!---- this button allows menu to collapse with narrow screen --->
+            <button type="button" class="navbar-toggle collapsed"
+                data-toggle="collapse"
+                data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <!--- 3 icon bars in button --->
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+          </div>
+
+          <!--- Menu --->
+          <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+              <!-- class 'active' highlights the menu option -->
+              <li class="active"><a href="#topcontainer">Mobile Sensors</a></li>
+              <li><a href="#middleContainer">Speedometer</a></li>
+              <li><a href="#middle2Container">Clock</a></li>
+              <li><a href="#bottomContainer">Compass</a></li>
+            </ul>
+
+          </div>
+
+      </div>
+    </div>
+
+    <!-------------------- Here starts the page body ---------------->
+    <!---------------------------------------------------------------
+      Page 1
+      This GUI displays Sensor and Status Values in Tabular format
+      --------------------------------------------------------------->
+    <div class="container contentContainer" id="topcontainer">
+      <div class="container-fluid" id="top">
+        <div class="tblRowSep"></div>
+        <div class="row topRow">
+            <h1 id="toptitle">Mobile Sensor Values</h1>
+        </div>
+       <div>
+          <table class="fixed centerit">
+            <thead>
+              <tr>
+                <th class="tblParNum">No.</th>
+                <th class="tblSep"></th>
+                <th class="tblPar">Parameter</th>
+                <th class="tblSep"></th>
+                <th class="tblParVal">Value</th>
+                <th class="tblSep"></th>
+                <th class="tblParUni">Units</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="label-info weatherlabel tblParNum">1</td>
+                <td class="tblSep"></td>
+                <td class="label-info weatherlabel tblPar">Baro Temperature</td>
+                <td class="tblSep"></td>
+                <td class="label-info weatherlabel tblParVal" id="tempBaro">61</td>
+                <td class="tblSep"></td>
+                <td class="label-info weatherlabel tblParUni" id="tempBaroUnits">F</td>
+              </tr>
+              <tr>
+                   <td class="tblRowSep"></td>
+              </tr>
+              <tr>
+                <td class="label-info weatherlabel tblParNum">2</td>
+                <td class="tblSep"></td>
+                <td class="label-info weatherlabel tblPar">Baro Pressure</td>
+                <td class="tblSep"></td>
+                <td class="label-info weatherlabel tblParVal" id="presBaro">29.89</td>
+                <td class="tblSep"></td>
+                <td class="label-info weatherlabel tblParUni" id="presBaroUnits">inHg</td>
+              </tr>
+              <tr>
+                   <td class="tblRowSep"></td>
+              </tr>
+              <tr>
+                <td class="label-info weatherlabel tblParNum">3</td>
+                <td class="tblSep"></td>
+                <td class="label-info weatherlabel tblPar">Humidity</td>
+                <td class="tblSep"></td>
+                <td class="label-info weatherlabel tblParVal" id="humidity">33</td>
+                <td class="tblSep"></td>
+                <td class="label-info weatherlabel tblParUni" id="humidityUnits">%</td>
+              </tr>
+              <tr>
+                   <td class="tblRowSep"></td>
+              </tr>
+              <tr>
+                <td class="label-info weatherlabel tblParNum">4</td>
+                <td class="tblSep"></td>
+                <td class="label-info weatherlabel tblPar">System Time</td>
+                <td class="tblSep"></td>
+                <td class="label-info weatherlabel tblParVal" id="systime">12345</td>
+                <td class="tblSep"></td>
+                <td class="label-info weatherlabel tblParUni" id="systimeUnits">sec</td>
+              </tr>
+              <tr>
+                   <td class="tblRowSep"></td>
+              </tr>
+              <tr>
+                <td class="label-info weatherlabel tblParNum">5</td>
+                <td class="tblSep"></td>
+                <td class="label-info weatherlabel tblPar">System Heap</td>
+                <td class="tblSep"></td>
+                <td class="label-info weatherlabel tblParVal" id="sysheap">32457</td>
+                <td class="tblSep"></td>
+                <td class="label-info weatherlabel tblParUni" id="sysheapUnits">byte</td>
+              </tr>
+              <tr>
+                   <td class="tblRowSep"></td>
+              </tr>
+              <tr>
+                <td class="label-info weatherlabel tblParNum">6</td>
+                <td class="tblSep"></td>
+                <td class="label-info weatherlabel tblPar">System Iterations</td>
+                <td class="tblSep"></td>
+                <td class="label-info weatherlabel tblParVal" id="sysloop">4697</td>
+                <td class="tblSep"></td>
+                <td class="label-info weatherlabel tblParUni" id="sysloopUnits">loop</td>
+              </tr>
+              <tr>
+                   <td class="tblRowSep"></td>
+              </tr>
+              <tr>
+                <td class="label-info weatherlabel tblParNum">7</td>
+                <td class="tblSep"></td>
+                <td class="label-info weatherlabel tblPar">Latitude</td>
+                <td class="tblSep"></td>
+                <td class="label-info weatherlabel tblParVal" id="Lat">0357231</td>
+                <td class="tblSep"></td>
+                <td class="label-info weatherlabel tblParUni" id="LatUnits">Deg</td>
+              </tr>
+              <tr>
+                   <td class="tblRowSep"></td>
+              </tr>
+              <tr>
+                <td class="label-info weatherlabel tblParNum">8</td>
+                <td class="tblSep"></th>
+                <td class="label-info weatherlabel tblPar">Longitude</td>
+                <td class="tblSep"></td>
+                <td class="label-info weatherlabel tblParVal" id="Lon">4249969</td>
+                <td class="tblSep"></td>
+                <td class="label-info weatherlabel tblParUni" id="LonUnits">Deg</td>
+              </tr>
+              <tr>
+                   <td class="tblRowSep"></td>
+              </tr>
+              <tr>
+                <td class="label-info weatherlabel tblParNum">9</td>
+                <td class="tblSep"></td>
+                <td class="label-info weatherlabel tblPar">Heart Rate</td>
+                <td class="tblSep"></td>
+                <td class="label-info weatherlabel tblParVal" id="HeartRate">126</td>
+                <td class="tblSep"></td>
+                <td class="label-info weatherlabel tblParUni" id="HeartRateUnits">bpm</td>
+              </tr>
+              <tr>
+                   <td class="tblRowSep"></td>
+              </tr>
+              <tr>
+                <td class="label-info weatherlabel tblParNum">10</td>
+                <td class="tblSep"></td>
+                <td class="label-info weatherlabel tblPar">Speed</td>
+                <td class="tblSep"></td>
+                <td class="label-info weatherlabel tblParVal" id="Speed">12.8</td>
+                <td class="tblSep"></td>
+                <td class="label-info weatherlabel tblParUni" id="SpeedUnits">mph</td>
+              </tr>
+              <tr>
+                   <td class="tblRowSep"></td>
+              </tr>
+              <tr>
+                <td class="label-info weatherlabel tblParNum">11</td>
+                <td class="tblSep"></td>
+                <td class="label-info weatherlabel tblPar">Altitude</td>
+                <td class="tblSep"></td>
+                <td class="label-info weatherlabel tblParVal" id="Altitude">500</td>
+                <td class="tblSep"></td>
+                <td class="label-info weatherlabel tblParUni" id="AltitudeUnits">feet</td>
+              </tr>
+              <tr>
+                   <td class="tblRowSep"></td>
+              </tr>
+              <tr>
+                <td class="label-info weatherlabel tblParNum">12</td>
+                <td class="tblSep"></td>
+                <td class="label-info weatherlabel tblPar">Heading</td>
+                <td class="tblSep"></td>
+                <td class="label-info weatherlabel tblParVal" id="Heading">0</td>
+                <td class="tblSep"></td>
+                <td class="label-info weatherlabel tblParUni" id="HeadingUnits">Deg</td>
+              </tr>
+              <tr>
+                   <td class="tblRowSep"></td>
+              </tr>
+              <tr>
+                <td class="label-info weatherlabel tblParNum">13</td>
+                <td class="tblSep"></td>
+                <td class="label-info weatherlabel tblPar">GPS Timestamp</td>
+                <td class="tblSep"></td>
+                <td class="label-info weatherlabel tblParVal" id="GpsTimestamp">1000000000000</td>
+                <td class="tblSep"></td>
+                <td class="label-info weatherlabel tblParUni" id="GpsTimestampUnits">ms</td>
+              </tr>
+              <tr>
+                   <td class="tblRowSep"></td>
+              </tr>
+            </tbody>
+          </table>
+      </div>
+
+    <!---- Page footer --->
+    <div class="row topRow2">
+        <span class="date">Date Placeholder</span><br>
+        <span class="time">Time Placeholder</span>
+    </div>
+    
+      </div>
+    </div>
+
+    <!---------------------------------------------------------------
+      Page 2
+      This GUI is a Speedometer
+      --------------------------------------------------------------->
+    <div class="container contentContainer" id="middleContainer">
+      <div class="container-fluid" id="middle">
+	    <div class="tblRowSep"></div>
+	    <div class="row topRow">
+	        <h1 id="middletitle">Speedometer</h1>
+	    </div>
+	    <!---Put page content here --->
+		<div style="width: 100%">
+			<canvas id="canvas" height="450" width="600"></canvas>
+			<div id="curspeed" class="center"></div>
+		</div>
+	    
+		<!---- Page footer --->
+		<div class="row topRow2">
+		    <span class="date">Date Placeholder</span><br>
+		    <span class="time">Time Placeholder</span>
+		</div>
+		<!---- End of page footer --->
+      </div>      
+    </div>
+    <!---------------------------------------------------------------
+      Page 3
+      This GUI is a Clock
+      --------------------------------------------------------------->
+    <div class="container contentContainer" id="middle2Container">
+      <div class="container-fluid" id="middle2">
+	    <div class="tblRowSep"></div>
+	    <div class="row topRow">
+	        <h1 id="middle2title">Clock from GPS timestamp</h1>
+	    </div>
+	    <!---Put page content here --->
+	    <div id = "container" style = "width:100%">
+	        <center><div id="clocktime" style = "float:left; width: 100%; height:200px;"></div></center>
+	    </div>
+	    
+		<!---- Page footer --->
+		<div class="row topRow2">
+		    <span class="date">Date Placeholder</span><br>
+		    <span class="time">Time Placeholder</span>
+		</div>
+		<!---- End of page footer --->
+      </div>      
+    </div>
+    <!---------------------------------------------------------------
+      Page 4
+      This GUI is a compass
+      --------------------------------------------------------------->
+    <div class="container contentContainer" id="bottomContainer">
+      <div class="container-fluid" id="bottom">
+	    <div class="row"></div>
+	    <div class="row topRow">
+	        <h1 id="bottomtitle">Direction from GPS</h1>
+	    </div>
+	    <!---Put page content here --->
+	    <div id = "container" style = "width:100%">
+	        <center><div id="compass" style = "float:left; width: 100%; height:200px;"></div></center>
+	    </div>
+	    
+		<!---- Page footer --->
+		<div class="row topRow2">
+		    <span class="date">Date Placeholder</span><br>
+		    <span class="time">Time Placeholder</span>
+		</div>
+		<!---- End of page footer --->
+      </div>      
+    </div>
+
+    <!---------------------------------------------------------------
+      Javascript/jquery for this app
+      --------------------------------------------------------------->
+    <iframe id="callURL" hidden="true" src=""></iframe>
+
+    <script type="text/javascript" src="js/Chart.js"></script>
+    <script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+
+    <script src="js/PerfectWidgets.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+	<script type="text/javascript" src="js/index.js"></script>
+	<script type="text/javascript" src="js/index_app.js"></script> <!--- for startup index.html --->
+    <script type="text/javascript" src="js/mscorlib.js" charset="utf-8"></script>
+    <script type="text/javascript" src="js/PerfectWidgets.js" charset="utf-8"></script>
+
+
+  </body>
+</html>

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;mobile/src/org/apache/cordova/antplus/heartrate/FindHeartRateMonitor.java&apos; to &apos;HeartRateMonitorInterface.java&apos;" description="Rename resource &apos;FindHeartRateMonitor.java&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="src/org/apache/cordova/antplus/heartrate/FindHeartRateMonitor.java" name="HeartRateMonitorInterface.java" stamp="1440636685472" updateReferences="true"/>
+</session>

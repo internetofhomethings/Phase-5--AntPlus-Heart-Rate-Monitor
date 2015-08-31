@@ -1,0 +1,15 @@
+{
+    "version": "1.0.0",
+    "name": "au.com.cathis.ma.gpslocation",
+    "cordova_name": "GPSLocation",
+    "description": "Exposes GPS Location related values to a Cordova application.",
+    "license": "Apache 2.0 License",
+    "keywords": [
+        "gps",
+        "location"
+    ],
+    "platforms": [
+        "android"
+    ],
+    "engines": []
+}

@@ -1,0 +1,175 @@
+package org.apache.cordova.antplus.heartrate;
+
+    import org.apache.cordova.CordovaPlugin;
+import org.apache.cordova.CallbackContext;
+
+    import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+    
+    //ant+ plugins
+    import com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc;
+import com.dsi.ant.plugins.antplus.pccbase.AntPluginPcc.IPluginAccessResultReceiver;
+import com.dsi.ant.plugins.antplus.pccbase.MultiDeviceSearch.MultiDeviceSearchResult;
+
+import com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc;
+import com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc.DataState;
+import com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc.ICalculatedRrIntervalReceiver;
+import com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc.IHeartRateDataReceiver;
+import com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc.IPage4AddtDataReceiver;
+import com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc.RrFlag;
+import com.dsi.ant.plugins.antplus.pcc.defines.DeviceState;
+import com.dsi.ant.plugins.antplus.pcc.defines.EventFlag;
+import com.dsi.ant.plugins.antplus.pcc.defines.RequestAccessResult;
+import com.dsi.ant.plugins.antplus.pccbase.AntPlusCommonPcc.IRssiReceiver;
+import com.dsi.ant.plugins.antplus.pccbase.PccReleaseHandle;
+import com.dsi.ant.plugins.antplus.pccbase.AntPluginPcc.IDeviceStateChangeReceiver;
+import com.dsi.ant.plugins.antplus.pccbase.AntPluginPcc.IPluginAccessResultReceiver;
+import com.dsi.ant.plugins.antplus.pccbase.AntPlusLegacyCommonPcc.ICumulativeOperatingTimeReceiver;
+import com.dsi.ant.plugins.antplus.pccbase.AntPlusLegacyCommonPcc.IManufacturerAndSerialReceiver;
+import com.dsi.ant.plugins.antplus.pccbase.AntPlusLegacyCommonPcc.IVersionAndModelReceiver;
+
+    /**
+     * This class echoes a string called from JavaScript.
+     */
+    public class FindHeartRateMonitor extends CordovaPlugin {
+
+        AntPlusHeartRatePcc hrPcc = null;
+        protected PccReleaseHandle<AntPlusHeartRatePcc> releaseHandle = null;
+        RequestAccessResult resultstatus = null;
+        CallbackContext callbackContext_ = null;
+
+        @Override
+        public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
+        	callbackContext_ = callbackContext;
+        	if (action.equals("Echo")) {
+                String message = args.getString(0);
+                this.echo(message, callbackContext);
+                return true;
+            }
+            if (action.equals("FindHeartRateMonitor")) {
+                //String message = args.getString(1);
+                //this.echo(message, callbackContext);
+				// starts the plugins UI search
+                releaseHandle = AntPlusHeartRatePcc.requestAccess(this.cordova.getActivity(), this.cordova.getActivity(), 
+                		base_IPluginAccessResultReceiver, base_IDeviceStateChangeReceiver);
+
+                //Let's wait for results to complete
+                while(resultstatus==null) {
+                	try {
+                	    Thread.sleep(100);                 //100 milliseconds is one second.
+                	} catch(InterruptedException ex) {
+                	    Thread.currentThread().interrupt();
+                	}                
+                }
+                return true;
+            }
+            return false;
+        }
+        IPluginAccessResultReceiver<AntPlusHeartRatePcc> base_IPluginAccessResultReceiver =
+            new IPluginAccessResultReceiver<AntPlusHeartRatePcc>()
+            {
+                //Handle the result, connecting to events on success or reporting failure to user.
+                @Override
+                public void onResultReceived(AntPlusHeartRatePcc result, RequestAccessResult resultCode,
+                    DeviceState initialDeviceState)
+                {
+                	resultstatus = resultCode;
+                    switch(resultCode)
+                    {
+                        case SUCCESS:
+                            hrPcc = result;
+                            this.echo(result.getDeviceName(), callbackContext_);
+                            ////tv_status.setText(result.getDeviceName() + ": " + initialDeviceState);
+                            ////subscribeToHrEvents();
+                            ////if(!result.supportsRssi()) tv_rssi.setText("N/A");
+                            break;
+                        case CHANNEL_NOT_AVAILABLE:
+                        	////Toast.makeText(Activity_HeartRateDisplayBase.this, "Channel Not Available", Toast.LENGTH_SHORT).show();
+                        	////tv_status.setText("Error. Do Menu->Reset.");
+                            break;
+                        case ADAPTER_NOT_DETECTED:
+                            Toast.makeText(Activity_HeartRateDisplayBase.this, "ANT Adapter Not Available. Built-in ANT hardware or external adapter required.", Toast.LENGTH_SHORT).show();
+                            tv_status.setText("Error. Do Menu->Reset.");
+                            break;
+                        case BAD_PARAMS:
+                            //Note: Since we compose all the params ourself, we should never see this result
+                            Toast.makeText(Activity_HeartRateDisplayBase.this, "Bad request parameters.", Toast.LENGTH_SHORT).show();
+                            tv_status.setText("Error. Do Menu->Reset.");
+                            break;
+                        case OTHER_FAILURE:
+                            Toast.makeText(Activity_HeartRateDisplayBase.this, "RequestAccess failed. See logcat for details.", Toast.LENGTH_SHORT).show();
+                            tv_status.setText("Error. Do Menu->Reset.");
+                            break;
+                        case DEPENDENCY_NOT_INSTALLED:
+                            tv_status.setText("Error. Do Menu->Reset.");
+                            AlertDialog.Builder adlgBldr = new AlertDialog.Builder(Activity_HeartRateDisplayBase.this);
+                            adlgBldr.setTitle("Missing Dependency");
+                            adlgBldr.setMessage("The required service\n\"" + AntPlusHeartRatePcc.getMissingDependencyName() + "\"\n was not found. You need to install the ANT+ Plugins service or you may need to update your existing version if you already have it. Do you want to launch the Play Store to get it?");
+                            adlgBldr.setCancelable(true);
+                            adlgBldr.setPositiveButton("Go to Store", new OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    Intent startStore = null;
+                                    startStore = new Intent(Intent.ACTION_VIEW,Uri.parse("market://details?id=" + AntPlusHeartRatePcc.getMissingDependencyPackageName()));
+                                    startStore.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                                    Activity_HeartRateDisplayBase.this.startActivity(startStore);
+                                }
+                            });
+                            adlgBldr.setNegativeButton("Cancel", new OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    dialog.dismiss();
+                                }
+                            });
+
+                            final AlertDialog waitDialog = adlgBldr.create();
+                            waitDialog.show();
+                            break;
+                        case USER_CANCELLED:
+                            tv_status.setText("Cancelled. Do Menu->Reset.");
+                            break;
+                        case UNRECOGNIZED:
+                            Toast.makeText(Activity_HeartRateDisplayBase.this,
+                                "Failed: UNRECOGNIZED. PluginLib Upgrade Required?",
+                                Toast.LENGTH_SHORT).show();
+                            tv_status.setText("Error. Do Menu->Reset.");
+                            break;
+                        default:
+                            Toast.makeText(Activity_HeartRateDisplayBase.this, "Unrecognized result: " + resultCode, Toast.LENGTH_SHORT).show();
+                            tv_status.setText("Error. Do Menu->Reset.");
+                            break;
+                    }
+                }
+            };
+        //Receives state changes and shows it on the status display line
+        protected  IDeviceStateChangeReceiver base_IDeviceStateChangeReceiver =
+            new IDeviceStateChangeReceiver()
+        {
+            @Override
+            public void onDeviceStateChange(final DeviceState newDeviceState)
+            {
+            	
+            }
+        };
+
+        private void echo(String message, CallbackContext callbackContext) {
+            if (message != null && message.length() > 0) {
+                callbackContext.success(message);
+            } else {
+                callbackContext.error("Expected one non-empty string argument.");
+            }
+        }
+        private void sendresult(String message, CallbackContext callbackContext) {
+            if (message != null && message.length() > 0) {
+                callbackContext.success(message);
+            } else {
+                callbackContext.error("Expected one non-empty string argument.");
+            }
+        }
+    }
