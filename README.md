@@ -54,28 +54,74 @@ run if it is to be preserved.
 
 Data is saved in CSV format every time a new GPS data set is received. The following fields are saved to the CSV file:
 
-Field                          Units
-1. UTC                       - Milliseconds
-2. Latitude                  - Degrees
-3. Longitude                 - Degrees
-4. Speed                     - Mph
-5. Altitude                  - Feet
-6. Temperature (Baro Sensor) - Degrees F
-7. Tempreature (Humid Sensr) - Degrees F
-8. Barometric Pressure       - inches Hg
-9. Humidity                  - Percent
-10.ESP8266 System time       - Seconds
-11.ESP8266 Free Heap         - Bytes
-12.ESP8266 loop() iteration  - Loops
+<table>
+<tr>
+<th>Field</th>
+<th>Units</th>
+</tr>
+<tr>
+<td>1. UTC</td>
+<td>Milliseconds</td>
+</tr>
+<tr>
+<td>2. Latitude</td>
+<td>Degrees</td>
+</tr>
+<tr>
+<td>3. Longitude</td>
+<td>Degrees</td>
+</tr>
+<tr>
+<td>4. Speed</td>
+<td>Mph</td>
+</tr>
+<tr>
+<td>5. Altitude</td>
+<td>Feet</td>
+</tr>
+<tr>
+<td>6. Temperature (Baro Sensor)</td>
+<td>Degrees F</td>
+</tr>
+<tr>
+<td>7. Temperature (Humidity Sensor)</td>
+<td>Degrees F</td>
+</tr>
+<tr>
+<td>8. Barometric Pressure</td>
+<td>inches Hg</td>
+</tr>
+<tr>
+<td>9. Humidity</td>
+<td>Percent</td>
+</tr>
+<tr>
+<td>10. ESP8266 System time</td>
+<td>Seconds</td>
+</tr>
+<tr>
+<td>11.ESP8266 Free Heap</td>
+<td>Bytes</td>
+</tr>
+<tr>
+<td>12.ESP8266 loop() iteration</td>
+<td>Loops</td>
+</tr>
+</table>
 
-Phase 4: Mobile App Gadgets:  August 23, 2015 
-Changes: 
-1. Three real-time data visualization screens added.
+Phase 4: Mobile App Gadgets:  August 23, 2015
+
+Changes:
+
+C1. Three real-time data visualization screens added.
+
 ---> 1. Speedometer
+
 ---> 2. Clock
+
 ---> 3. Compass
 
-2. Button added to top navigation bar to use/not use ESP8266 data in log file.
+C2. Button added to top navigation bar to use/not use ESP8266 data in log file.
 
 
 Phase 5: Mobile App Gadgets:  August 31, 2015 
